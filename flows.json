@@ -1,1 +1,424 @@
-[]
+[
+    {
+        "id": "38f4344b2d76ef0c",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "a354c21195c11344",
+        "type": "ui-base",
+        "name": "Mein Dashboard",
+        "path": "/dashboard",
+        "appIcon": "",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ],
+        "showPathInSidebar": false,
+        "headerContent": "page",
+        "navigationStyle": "default",
+        "titleBarStyle": "default",
+        "showReconnectNotification": true,
+        "notificationDisplayTime": 1,
+        "showDisconnectNotification": true,
+        "allowInstall": false
+    },
+    {
+        "id": "176d2fa3dd09c68d",
+        "type": "ui-theme",
+        "name": "Standardthema",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#0094CE",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        },
+        "sizes": {
+            "density": "default",
+            "pagePadding": "12px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "12px"
+        }
+    },
+    {
+        "id": "79fb294fdd92f21d",
+        "type": "ui-page",
+        "name": "Seite 1",
+        "ui": "a354c21195c11344",
+        "path": "/page1",
+        "icon": "home",
+        "layout": "grid",
+        "theme": "176d2fa3dd09c68d",
+        "breakpoints": [
+            {
+                "name": "Default",
+                "px": 0,
+                "cols": 3
+            },
+            {
+                "name": "Tablet",
+                "px": 576,
+                "cols": 6
+            },
+            {
+                "name": "Small Desktop",
+                "px": 768,
+                "cols": 9
+            },
+            {
+                "name": "Desktop",
+                "px": 1024,
+                "cols": 12
+            }
+        ],
+        "order": 1,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "20034b89326ef20e",
+        "type": "ui-group",
+        "name": "Gruppe 1",
+        "page": "79fb294fdd92f21d",
+        "width": 6,
+        "height": 1,
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": true,
+        "disabled": false,
+        "groupType": "default"
+    },
+    {
+        "id": "7043d2f851af341b",
+        "type": "tls-config",
+        "name": "Test Zertifikat",
+        "cert": "",
+        "key": "",
+        "ca": "",
+        "certname": "",
+        "keyname": "",
+        "caname": "",
+        "servername": "",
+        "verifyservercert": true,
+        "alpnprotocol": ""
+    },
+    {
+        "id": "00c65ee81850109c",
+        "type": "mqtt-broker",
+        "name": "Prototyp Broker Server",
+        "broker": "localhost",
+        "port": "1883",
+        "tls": "7043d2f851af341b",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "e1eefac2932646d4",
+        "type": "mqtt in",
+        "z": "38f4344b2d76ef0c",
+        "name": "",
+        "topic": "sensors/room/data",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "00c65ee81850109c",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 150,
+        "y": 440,
+        "wires": [
+            [
+                "dfcfbff65df29dc8",
+                "add7c2694b80a6a8",
+                "2d75cc80bac64db8"
+            ]
+        ]
+    },
+    {
+        "id": "dfcfbff65df29dc8",
+        "type": "switch",
+        "z": "38f4344b2d76ef0c",
+        "name": "CO2 measurement bounds",
+        "property": "payload.co2",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "btwn",
+                "v": "0",
+                "vt": "num",
+                "v2": "1000",
+                "v2t": "num"
+            },
+            {
+                "t": "gt",
+                "v": "1000",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 540,
+        "y": 440,
+        "wires": [
+            [
+                "01053fafe1857d82"
+            ],
+            [
+                "a1ee608419ee49a7"
+            ]
+        ]
+    },
+    {
+        "id": "add7c2694b80a6a8",
+        "type": "ui-chart",
+        "z": "38f4344b2d76ef0c",
+        "group": "20034b89326ef20e",
+        "name": "",
+        "label": "chart",
+        "order": 3,
+        "chartType": "line",
+        "category": "topic",
+        "categoryType": "msg",
+        "xAxisLabel": "",
+        "xAxisProperty": "",
+        "xAxisPropertyType": "timestamp",
+        "xAxisType": "time",
+        "xAxisFormat": "",
+        "xAxisFormatType": "auto",
+        "xmin": "",
+        "xmax": "",
+        "yAxisLabel": "CO2-Verlauf (ppm)",
+        "yAxisProperty": "payload.co2",
+        "yAxisPropertyType": "msg",
+        "ymin": "400",
+        "ymax": "2500",
+        "bins": 10,
+        "action": "append",
+        "stackSeries": false,
+        "pointShape": "circle",
+        "pointRadius": 4,
+        "showLegend": true,
+        "removeOlder": 1,
+        "removeOlderUnit": "3600",
+        "removeOlderPoints": "",
+        "colors": [
+            "#0095ff",
+            "#ff0000",
+            "#ff7f0e",
+            "#2ca02c",
+            "#a347e1",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "textColor": [
+            "#666666"
+        ],
+        "textColorDefault": true,
+        "gridColor": [
+            "#e5e5e5"
+        ],
+        "gridColorDefault": true,
+        "width": 6,
+        "height": 8,
+        "className": "",
+        "interpolation": "linear",
+        "x": 350,
+        "y": 580,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "7db13cdf40c8648c",
+        "type": "ui-gauge",
+        "z": "38f4344b2d76ef0c",
+        "name": "CO2-Wert",
+        "group": "20034b89326ef20e",
+        "order": 2,
+        "value": "payload",
+        "valueType": "msg",
+        "width": 3,
+        "height": 3,
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "gauge",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "units",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "400",
+                "color": "#5cd65c",
+                "text": "",
+                "textType": "value"
+            },
+            {
+                "from": "1000",
+                "color": "#ffc800",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "1400",
+                "color": "#ea5353",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": "400",
+        "max": "2500",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": 8,
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 880,
+        "y": 180,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "01053fafe1857d82",
+        "type": "change",
+        "z": "38f4344b2d76ef0c",
+        "name": "Status: Gut",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "Gute Luftqualität",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 850,
+        "y": 320,
+        "wires": [
+            [
+                "f0fa1af58a667bb3"
+            ]
+        ]
+    },
+    {
+        "id": "a1ee608419ee49a7",
+        "type": "change",
+        "z": "38f4344b2d76ef0c",
+        "name": "Status: Lüften",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "Lüften empfohlen :)",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 880,
+        "y": 560,
+        "wires": [
+            [
+                "f0fa1af58a667bb3"
+            ]
+        ]
+    },
+    {
+        "id": "f0fa1af58a667bb3",
+        "type": "ui-text",
+        "z": "38f4344b2d76ef0c",
+        "group": "20034b89326ef20e",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "name": "Aktuelle Empfehlung",
+        "label": "Empfehlung: ",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 1140,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "2d75cc80bac64db8",
+        "type": "change",
+        "z": "38f4344b2d76ef0c",
+        "name": "Extrahiere CO2-Wert",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.co2",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 600,
+        "y": 300,
+        "wires": [
+            [
+                "7db13cdf40c8648c"
+            ]
+        ]
+    }
+]
