@@ -1,47 +1,11 @@
 [
     {
-        "id": "be4f8f5c0e642347",
+        "id": "unified_tab",
         "type": "tab",
-        "label": "Flow 1",
+        "label": "Raumklima-Vergleich",
         "disabled": false,
         "info": "",
         "env": []
-    },
-    {
-        "id": "d4f748a0d5249458",
-        "type": "tab",
-        "label": "Referenz-Messstation",
-        "disabled": false,
-        "info": "",
-        "env": []
-    },
-    {
-        "id": "group_live_values",
-        "type": "ui-group",
-        "name": "Live-Werte",
-        "page": "page_main",
-        "width": "12",
-        "height": "",
-        "order": 1,
-        "showTitle": true,
-        "className": "",
-        "visible": "true",
-        "disabled": "false",
-        "groupType": "default"
-    },
-    {
-        "id": "group_charts",
-        "type": "ui-group",
-        "name": "Verlaufsdiagramme",
-        "page": "page_main",
-        "width": "12",
-        "height": "",
-        "order": 2,
-        "showTitle": true,
-        "className": "",
-        "visible": "true",
-        "disabled": "false",
-        "groupType": "default"
     },
     {
         "id": "00c65ee81850109c",
@@ -55,9 +19,7 @@
         "protocolVersion": 4,
         "keepalive": 60,
         "cleansession": true,
-        "autoUnsubscribe": true,
-        "birthQos": "0",
-        "willQos": "0"
+        "autoUnsubscribe": true
     },
     {
         "id": "a354c21195c11344",
@@ -68,13 +30,13 @@
     {
         "id": "176d2fa3dd09c68d",
         "type": "ui-theme",
-        "name": "Standardthema",
+        "name": "Dark Theme",
         "colors": {
-            "surface": "#ffffff",
-            "primary": "#0094ce",
-            "bgPage": "#eeeeee",
-            "groupBg": "#ffffff",
-            "groupOutline": "#cccccc"
+            "surface": "#333333",
+            "primary": "#00b7ff",
+            "bgPage": "#111111",
+            "groupBg": "#222222",
+            "groupOutline": "#444444"
         }
     },
     {
@@ -92,10 +54,28 @@
         "disabled": "false"
     },
     {
-        "id": "7904544829667973",
+        "id": "group_live_values",
+        "type": "ui-group",
+        "name": "Live-Werte (Referenz-Station)",
+        "page": "page_main",
+        "width": "12",
+        "order": 1,
+        "className": ""
+    },
+    {
+        "id": "group_charts",
+        "type": "ui-group",
+        "name": "Vergleichsdiagramme",
+        "page": "page_main",
+        "width": "12",
+        "order": 2,
+        "className": ""
+    },
+    {
+        "id": "mqtt_in_referenz",
         "type": "mqtt in",
-        "z": "d4f748a0d5249458",
-        "name": "Referenz-Station",
+        "z": "unified_tab",
+        "name": "Referenz (SCD41)",
         "topic": "sensors/referenz/data",
         "qos": "1",
         "datatype": "json",
@@ -104,25 +84,68 @@
         "rap": true,
         "rh": 0,
         "inputs": 0,
-        "x": 150,
-        "y": 400,
+        "x": 90,
+        "y": 120,
         "wires": [
             [
-                "d4475778e2525a7c",
-                "e2d2d72f48f08835",
-                "5162fed0b830e9b2",
-                "39b8c7fc6a675937",
-                "9504bfa93b7d8463",
-                "2a3a46f8935b7311",
-                "edc9654f5c5eb4e4"
+                "get_ref_co2",
+                "get_ref_temp_bme",
+                "get_ref_hum_bme",
+                "get_ref_pressure"
             ]
         ]
     },
     {
-        "id": "d4475778e2525a7c",
+        "id": "mqtt_in_ens160",
+        "type": "mqtt in",
+        "z": "unified_tab",
+        "name": "eCO2 (ENS160)",
+        "topic": "sensors/eco2-ens160/data",
+        "qos": "1",
+        "datatype": "json",
+        "broker": "00c65ee81850109c",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 80,
+        "y": 220,
+        "wires": [
+            [
+                "get_ens_eco2",
+                "get_ens_temp",
+                "get_ens_hum"
+            ]
+        ]
+    },
+    {
+        "id": "mqtt_in_sgp30",
+        "type": "mqtt in",
+        "z": "unified_tab",
+        "name": "Low-Cost (SGP30)",
+        "topic": "sensors/lowcost-sgp30/data",
+        "qos": "1",
+        "datatype": "json",
+        "broker": "00c65ee81850109c",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 90,
+        "y": 300,
+        "wires": [
+            [
+                "get_sgp_eco2",
+                "get_sgp_temp",
+                "get_sgp_hum"
+            ]
+        ]
+    },
+    {
+        "id": "get_ref_co2",
         "type": "change",
-        "z": "d4f748a0d5249458",
-        "name": "CO2",
+        "z": "unified_tab",
+        "name": "CO2 (NDIR)",
         "rules": [
             {
                 "t": "set",
@@ -130,26 +153,86 @@
                 "pt": "msg",
                 "to": "payload.co2",
                 "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "SCD41 (NDIR)",
+                "tot": "str"
             }
         ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 370,
-        "y": 120,
+        "x": 510,
+        "y": 80,
         "wires": [
             [
-                "e6957ceae3765025",
-                "8ba4db4d32cb3051"
+                "chart_co2_compare",
+                "gauge_co2_ref"
             ]
         ]
     },
     {
-        "id": "e2d2d72f48f08835",
+        "id": "get_ens_eco2",
         "type": "change",
-        "z": "d4f748a0d5249458",
+        "z": "unified_tab",
+        "name": "eCO2 (ENS)",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.eco2",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "ENS160 (eCO2)",
+                "tot": "str"
+            }
+        ],
+        "x": 510,
+        "y": 120,
+        "wires": [
+            [
+                "chart_co2_compare"
+            ]
+        ]
+    },
+    {
+        "id": "get_sgp_eco2",
+        "type": "change",
+        "z": "unified_tab",
+        "name": "eCO2 (SGP)",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.eco2",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "SGP30 (eCO2)",
+                "tot": "str"
+            }
+        ],
+        "x": 510,
+        "y": 160,
+        "wires": [
+            [
+                "chart_co2_compare"
+            ]
+        ]
+    },
+    {
+        "id": "get_ref_temp_bme",
+        "type": "change",
+        "z": "unified_tab",
         "name": "Temp (BME)",
         "rules": [
             {
@@ -163,62 +246,81 @@
                 "t": "set",
                 "p": "topic",
                 "pt": "msg",
-                "to": "BME280",
+                "to": "Referenz (BME280)",
                 "tot": "str"
             }
         ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 380,
-        "y": 200,
+        "x": 510,
+        "y": 240,
         "wires": [
             [
-                "c42b4565b444963a",
-                "01a95b766fd7bdad"
+                "chart_temp_compare",
+                "gauge_temp_ref"
             ]
         ]
     },
     {
-        "id": "5162fed0b830e9b2",
+        "id": "get_ens_temp",
         "type": "change",
-        "z": "d4f748a0d5249458",
-        "name": "Temp (SCD)",
+        "z": "unified_tab",
+        "name": "Temp (AHT)",
         "rules": [
             {
                 "t": "set",
                 "p": "payload",
                 "pt": "msg",
-                "to": "payload.temp_scd",
+                "to": "payload.temp",
                 "tot": "msg"
             },
             {
                 "t": "set",
                 "p": "topic",
                 "pt": "msg",
-                "to": "SCD41",
+                "to": "Vergleich (AHT21)",
                 "tot": "str"
             }
         ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 380,
-        "y": 260,
+        "x": 510,
+        "y": 280,
         "wires": [
             [
-                "c42b4565b444963a"
+                "chart_temp_compare"
             ]
         ]
     },
     {
-        "id": "39b8c7fc6a675937",
+        "id": "get_sgp_temp",
         "type": "change",
-        "z": "d4f748a0d5249458",
+        "z": "unified_tab",
+        "name": "Temp (DHT)",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.temp",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "Low-Cost (DHT22)",
+                "tot": "str"
+            }
+        ],
+        "x": 510,
+        "y": 320,
+        "wires": [
+            [
+                "chart_temp_compare"
+            ]
+        ]
+    },
+    {
+        "id": "get_ref_hum_bme",
+        "type": "change",
+        "z": "unified_tab",
         "name": "Hum (BME)",
         "rules": [
             {
@@ -232,62 +334,81 @@
                 "t": "set",
                 "p": "topic",
                 "pt": "msg",
-                "to": "BME280",
+                "to": "Referenz (BME280)",
                 "tot": "str"
             }
         ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 380,
-        "y": 360,
+        "x": 510,
+        "y": 400,
         "wires": [
             [
-                "b228363e0efab44e",
-                "cb08635398cddb77"
+                "chart_hum_compare",
+                "gauge_hum_ref"
             ]
         ]
     },
     {
-        "id": "9504bfa93b7d8463",
+        "id": "get_ens_hum",
         "type": "change",
-        "z": "d4f748a0d5249458",
-        "name": "Hum (SCD)",
+        "z": "unified_tab",
+        "name": "Hum (AHT)",
         "rules": [
             {
                 "t": "set",
                 "p": "payload",
                 "pt": "msg",
-                "to": "payload.hum_scd",
+                "to": "payload.hum",
                 "tot": "msg"
             },
             {
                 "t": "set",
                 "p": "topic",
                 "pt": "msg",
-                "to": "SCD41",
+                "to": "Vergleich (AHT21)",
                 "tot": "str"
             }
         ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 380,
-        "y": 420,
+        "x": 510,
+        "y": 440,
         "wires": [
             [
-                "b228363e0efab44e"
+                "chart_hum_compare"
             ]
         ]
     },
     {
-        "id": "2a3a46f8935b7311",
+        "id": "get_sgp_hum",
         "type": "change",
-        "z": "d4f748a0d5249458",
+        "z": "unified_tab",
+        "name": "Hum (DHT)",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.hum",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "Low-Cost (DHT22)",
+                "tot": "str"
+            }
+        ],
+        "x": 510,
+        "y": 480,
+        "wires": [
+            [
+                "chart_hum_compare"
+            ]
+        ]
+    },
+    {
+        "id": "get_ref_pressure",
+        "type": "change",
+        "z": "unified_tab",
         "name": "Luftdruck",
         "rules": [
             {
@@ -298,120 +419,208 @@
                 "tot": "msg"
             }
         ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 370,
-        "y": 520,
+        "x": 500,
+        "y": 560,
         "wires": [
             [
-                "9d0f9a33d9453bfa"
+                "text_pressure"
             ]
         ]
     },
     {
-        "id": "edc9654f5c5eb4e4",
-        "type": "switch",
-        "z": "d4f748a0d5249458",
-        "name": "CO2 Grenzwert",
-        "property": "payload.co2",
-        "propertyType": "msg",
-        "rules": [
-            {
-                "t": "lte",
-                "v": "1000",
-                "vt": "num"
-            },
-            {
-                "t": "gt",
-                "v": "1000",
-                "vt": "num"
-            }
+        "id": "chart_co2_compare",
+        "type": "ui-chart",
+        "z": "unified_tab",
+        "group": "group_charts",
+        "name": "CO2 Vergleich",
+        "label": "CO₂-Vergleich (NDIR vs. eCO₂)",
+        "order": 1,
+        "chartType": "line",
+        "category": "topic",
+        "categoryType": "msg",
+        "xAxisLabel": "",
+        "xAxisProperty": "",
+        "xAxisPropertyType": "timestamp",
+        "xAxisType": "time",
+        "xAxisFormat": "",
+        "xAxisFormatType": "auto",
+        "xmin": "",
+        "xmax": "",
+        "yAxisLabel": "",
+        "yAxisProperty": "payload",
+        "yAxisPropertyType": "msg",
+        "ymin": "400",
+        "ymax": "5000",
+        "bins": "",
+        "stackSeries": false,
+        "pointRadius": "",
+        "showLegend": true,
+        "removeOlder": "1",
+        "removeOlderUnit": "3600",
+        "removeOlderPoints": "",
+        "colors": [
+            "#1f77b4",
+            "#ff7f0e",
+            "#2ca02c",
+            "#d62728",
+            "#9467bd",
+            "#8c564b",
+            "#e377c2",
+            "#7f7f7f",
+            "#bcbd22"
         ],
-        "checkall": "true",
-        "repair": false,
-        "outputs": 2,
-        "x": 370,
-        "y": 620,
-        "wires": [
-            [
-                "5ae7e6fc3b45f2e9"
-            ],
-            [
-                "9747161e1239cbb7"
-            ]
-        ]
-    },
-    {
-        "id": "5ae7e6fc3b45f2e9",
-        "type": "change",
-        "z": "d4f748a0d5249458",
-        "name": "Status: Gut",
-        "rules": [
-            {
-                "t": "set",
-                "p": "payload",
-                "pt": "msg",
-                "to": "Gute Luftqualität",
-                "tot": "str"
-            }
+        "textColor": [
+            "#666666"
         ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 580,
-        "y": 600,
-        "wires": [
-            [
-                "e5813de2f1061ea3"
-            ]
-        ]
-    },
-    {
-        "id": "9747161e1239cbb7",
-        "type": "change",
-        "z": "d4f748a0d5249458",
-        "name": "Status: Lüften",
-        "rules": [
-            {
-                "t": "set",
-                "p": "payload",
-                "pt": "msg",
-                "to": "Lüften empfohlen!",
-                "tot": "str"
-            }
+        "textColorDefault": true,
+        "gridColor": [
+            "#e5e5e5"
         ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 590,
-        "y": 640,
+        "gridColorDefault": true,
+        "width": "12",
+        "height": "7",
+        "className": "",
+        "interpolation": "linear",
+        "x": 750,
+        "y": 120,
         "wires": [
-            [
-                "e5813de2f1061ea3"
-            ]
+            []
         ]
     },
     {
-        "id": "e6957ceae3765025",
+        "id": "chart_temp_compare",
+        "type": "ui-chart",
+        "z": "unified_tab",
+        "group": "group_charts",
+        "name": "Temperatur Vergleich",
+        "label": "Temperatur-Vergleich",
+        "order": 2,
+        "chartType": "line",
+        "category": "topic",
+        "categoryType": "msg",
+        "xAxisLabel": "",
+        "xAxisProperty": "",
+        "xAxisPropertyType": "timestamp",
+        "xAxisType": "time",
+        "xAxisFormat": "",
+        "xAxisFormatType": "auto",
+        "xmin": "",
+        "xmax": "",
+        "yAxisLabel": "",
+        "yAxisProperty": "payload",
+        "yAxisPropertyType": "msg",
+        "ymin": "",
+        "ymax": "",
+        "bins": "",
+        "stackSeries": false,
+        "pointRadius": "",
+        "showLegend": true,
+        "removeOlder": "1",
+        "removeOlderUnit": "3600",
+        "removeOlderPoints": "",
+        "colors": [
+            "#1f77b4",
+            "#ff7f0e",
+            "#2ca02c",
+            "#000000",
+            "#000000",
+            "#000000",
+            "#000000",
+            "#000000",
+            "#000000"
+        ],
+        "textColor": [
+            "#666666"
+        ],
+        "textColorDefault": true,
+        "gridColor": [
+            "#e5e5e5"
+        ],
+        "gridColorDefault": true,
+        "width": "12",
+        "height": "7",
+        "className": "",
+        "interpolation": "linear",
+        "x": 770,
+        "y": 280,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "chart_hum_compare",
+        "type": "ui-chart",
+        "z": "unified_tab",
+        "group": "group_charts",
+        "name": "Feuchtigkeit Vergleich",
+        "label": "Luftfeuchtigkeits-Vergleich",
+        "order": 3,
+        "chartType": "line",
+        "category": "topic",
+        "categoryType": "msg",
+        "xAxisLabel": "",
+        "xAxisProperty": "",
+        "xAxisPropertyType": "timestamp",
+        "xAxisType": "time",
+        "xAxisFormat": "",
+        "xAxisFormatType": "auto",
+        "xmin": "",
+        "xmax": "",
+        "yAxisLabel": "",
+        "yAxisProperty": "payload",
+        "yAxisPropertyType": "msg",
+        "ymin": "",
+        "ymax": "",
+        "bins": "",
+        "stackSeries": false,
+        "pointRadius": "",
+        "showLegend": true,
+        "removeOlder": "1",
+        "removeOlderUnit": "3600",
+        "removeOlderPoints": "",
+        "colors": [
+            "#1f77b4",
+            "#ff7f0e",
+            "#2ca02c",
+            "#000000",
+            "#000000",
+            "#000000",
+            "#000000",
+            "#000000",
+            "#000000"
+        ],
+        "textColor": [
+            "#666666"
+        ],
+        "textColorDefault": true,
+        "gridColor": [
+            "#e5e5e5"
+        ],
+        "gridColorDefault": true,
+        "width": "12",
+        "height": "7",
+        "className": "",
+        "interpolation": "linear",
+        "x": 770,
+        "y": 440,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "gauge_co2_ref",
         "type": "ui-gauge",
-        "z": "d4f748a0d5249458",
-        "name": "CO2",
+        "z": "unified_tab",
+        "name": "CO2 Referenz",
         "group": "group_live_values",
         "order": 1,
         "value": "payload",
         "valueType": "msg",
-        "width": 6,
+        "width": 4,
         "height": 4,
-        "gtype": "gauge-tank",
-        "gstyle": "rounded",
-        "title": "CO₂-Wert",
+        "gtype": "gauge-34",
+        "gstyle": "needle",
+        "title": "CO₂ (Referenz)",
         "alwaysShowTitle": false,
         "units": "",
         "icon": "",
@@ -439,28 +648,28 @@
         ],
         "min": 400,
         "max": 3000,
-        "sizeThickness": "",
-        "sizeGap": "",
-        "sizeKeyThickness": "",
+        "sizeThickness": "13",
+        "sizeGap": "4",
+        "sizeKeyThickness": "10",
         "className": "",
-        "x": 610,
-        "y": 120,
+        "x": 750,
+        "y": 80,
         "wires": [
             []
         ]
     },
     {
-        "id": "01a95b766fd7bdad",
+        "id": "gauge_temp_ref",
         "type": "ui-gauge",
-        "z": "d4f748a0d5249458",
-        "name": "Temperatur",
+        "z": "unified_tab",
+        "name": "Temperatur Referenz",
         "group": "group_live_values",
         "order": 2,
         "value": "payload",
         "valueType": "msg",
-        "width": 3,
-        "height": 2,
-        "gtype": "gauge-tile",
+        "width": "3",
+        "height": "3",
+        "gtype": "gauge-34",
         "gstyle": "needle",
         "title": "Temperatur",
         "alwaysShowTitle": false,
@@ -490,28 +699,29 @@
         ],
         "min": 0,
         "max": 40,
-        "sizeThickness": "",
-        "sizeGap": "",
-        "sizeKeyThickness": "",
+        "sizeThickness": "13",
+        "sizeGap": "4",
+        "sizeKeyThickness": "10",
         "className": "",
-        "x": 630,
-        "y": 200,
+        "x": 770,
+        "y": 240,
         "wires": [
             []
         ]
     },
     {
-        "id": "cb08635398cddb77",
+        "id": "gauge_hum_ref",
         "type": "ui-gauge",
-        "z": "d4f748a0d5249458",
-        "name": "Luftfeuchtigkeit",
+        "z": "unified_tab",
+        "name": "Luftfeuchtigkeit Referenz",
         "group": "group_live_values",
         "order": 3,
         "value": "payload",
         "valueType": "msg",
-        "width": 3,
-        "height": 2,
-        "gtype": "gauge-tile",
+        "width": "3",
+        "height": "3",
+        "gtype": "gauge-34",
+        "gstyle": "needle",
         "title": "Luftfeuchte",
         "alwaysShowTitle": false,
         "units": "",
@@ -540,234 +750,31 @@
         ],
         "min": 0,
         "max": 100,
-        "sizeThickness": "",
-        "sizeGap": "",
-        "sizeKeyThickness": "",
+        "sizeThickness": "13",
+        "sizeGap": "4",
+        "sizeKeyThickness": "10",
         "className": "",
-        "x": 620,
-        "y": 360,
+        "x": 760,
+        "y": 400,
         "wires": [
             []
         ]
     },
     {
-        "id": "9d0f9a33d9453bfa",
+        "id": "text_pressure",
         "type": "ui-text",
-        "z": "d4f748a0d5249458",
+        "z": "unified_tab",
         "group": "group_live_values",
         "order": 4,
-        "width": 6,
+        "width": 12,
         "height": 1,
         "name": "Luftdruck",
-        "label": "Luftdruck",
+        "label": "Luftdruck (Referenz)",
         "format": "{{msg.payload | number:1}} hPa",
         "layout": "row-spread",
         "className": "",
-        "x": 620,
-        "y": 520,
+        "x": 740,
+        "y": 560,
         "wires": []
-    },
-    {
-        "id": "e5813de2f1061ea3",
-        "type": "ui-text",
-        "z": "d4f748a0d5249458",
-        "group": "group_live_values",
-        "order": 5,
-        "width": 6,
-        "height": 1,
-        "name": "Empfehlung",
-        "label": "Handlungsempfehlung",
-        "format": "{{msg.payload}}",
-        "layout": "row-spread",
-        "className": "",
-        "x": 800,
-        "y": 620,
-        "wires": []
-    },
-    {
-        "id": "8ba4db4d32cb3051",
-        "type": "ui-chart",
-        "z": "d4f748a0d5249458",
-        "group": "group_charts",
-        "name": "CO2 Verlauf",
-        "label": "CO₂-Verlauf",
-        "order": 1,
-        "chartType": "scatter",
-        "category": "payload",
-        "categoryType": "msg",
-        "xAxisLabel": "",
-        "xAxisProperty": "",
-        "xAxisPropertyType": "timestamp",
-        "xAxisType": "time",
-        "xAxisFormat": "",
-        "xAxisFormatType": "auto",
-        "xmin": "",
-        "xmax": "",
-        "yAxisLabel": "",
-        "yAxisProperty": "",
-        "yAxisPropertyType": "property",
-        "ymin": "400",
-        "ymax": "3000",
-        "bins": "",
-        "action": "append",
-        "stackSeries": false,
-        "pointShape": "line",
-        "pointRadius": "",
-        "showLegend": true,
-        "removeOlder": "1",
-        "removeOlderUnit": "3600",
-        "removeOlderPoints": "",
-        "colors": [
-            "#1f77b4",
-            "#000000",
-            "#000000",
-            "#000000",
-            "#000000",
-            "#000000",
-            "#000000",
-            "#000000",
-            "#000000"
-        ],
-        "textColor": [
-            "#666666"
-        ],
-        "textColorDefault": true,
-        "gridColor": [
-            "#e5e5e5"
-        ],
-        "gridColorDefault": true,
-        "width": "12",
-        "height": "7",
-        "className": "",
-        "interpolation": "linear",
-        "x": 630,
-        "y": 160,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "c42b4565b444963a",
-        "type": "ui-chart",
-        "z": "d4f748a0d5249458",
-        "group": "group_charts",
-        "name": "Temperatur Vergleich",
-        "label": "Temperatur-Vergleich",
-        "order": 2,
-        "chartType": "bar",
-        "category": "payload",
-        "categoryType": "msg",
-        "xAxisLabel": "",
-        "xAxisProperty": "",
-        "xAxisPropertyType": "timestamp",
-        "xAxisType": "category",
-        "xAxisFormat": "",
-        "xAxisFormatType": "auto",
-        "xmin": "",
-        "xmax": "",
-        "yAxisLabel": "",
-        "yAxisProperty": "",
-        "yAxisPropertyType": "property",
-        "ymin": "",
-        "ymax": "",
-        "bins": "",
-        "action": "append",
-        "stackSeries": false,
-        "pointShape": "circle",
-        "pointRadius": "",
-        "showLegend": true,
-        "removeOlder": "1",
-        "removeOlderUnit": "3600",
-        "removeOlderPoints": "",
-        "colors": [
-            "#1f77b4",
-            "#ff7f0e",
-            "#1f77b4",
-            "#000000",
-            "#1f77b4",
-            "#000000",
-            "#1f77b4",
-            "#000000",
-            "#1f77b4"
-        ],
-        "textColor": [
-            "#666666"
-        ],
-        "textColorDefault": true,
-        "gridColor": [
-            "#e5e5e5"
-        ],
-        "gridColorDefault": true,
-        "width": "12",
-        "height": "7",
-        "className": "",
-        "interpolation": "linear",
-        "x": 670,
-        "y": 260,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "b228363e0efab44e",
-        "type": "ui-chart",
-        "z": "d4f748a0d5249458",
-        "group": "group_charts",
-        "name": "Feuchtigkeit Vergleich",
-        "label": "Luftfeuchtigkeits-Vergleich",
-        "order": 3,
-        "chartType": "bar",
-        "category": "payload",
-        "categoryType": "msg",
-        "xAxisLabel": "",
-        "xAxisProperty": "",
-        "xAxisPropertyType": "timestamp",
-        "xAxisType": "category",
-        "xAxisFormat": "",
-        "xAxisFormatType": "auto",
-        "xmin": "",
-        "xmax": "",
-        "yAxisLabel": "",
-        "yAxisProperty": "",
-        "yAxisPropertyType": "property",
-        "ymin": "",
-        "ymax": "",
-        "bins": "",
-        "action": "append",
-        "stackSeries": false,
-        "pointShape": "circle",
-        "pointRadius": "",
-        "showLegend": true,
-        "removeOlder": "1",
-        "removeOlderUnit": "3600",
-        "removeOlderPoints": "",
-        "colors": [
-            "#2ca02c",
-            "#d62728",
-            "#000000",
-            "#000000",
-            "#000000",
-            "#000000",
-            "#000000",
-            "#000000",
-            "#000000"
-        ],
-        "textColor": [
-            "#666666"
-        ],
-        "textColorDefault": true,
-        "gridColor": [
-            "#e5e5e5"
-        ],
-        "gridColorDefault": true,
-        "width": "12",
-        "height": "7",
-        "className": "",
-        "interpolation": "linear",
-        "x": 670,
-        "y": 420,
-        "wires": [
-            []
-        ]
     }
 ]
